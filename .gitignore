@@ -4,3 +4,4 @@
 database/
 cogs/Server.py
 database/events.json
+.vscode/launch.json

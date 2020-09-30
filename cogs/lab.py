@@ -53,24 +53,29 @@ class LabCog(commands.Cog, Server):
         self.hasCheese = False
         self.getNextTime()
 
-    def getNextTime(self):
+    def getNextTime(self,skip_elapsed_check=False):
         now = datetime.datetime.now()
 
         #Get next cheese time
         self.nextRatDate = self.events.get(where('name') == 'ratrace')['next']
 
         # Check if date exists or less than today otherwise write today in the file
-        if (self.nextRatDate == "" or datetime.datetime.strptime(self.nextRatDate, "%Y-%m-%d %H:%M:%S") < now):
+        if (not skip_elapsed_check) and \
+            (self.nextRatDate == "" or datetime.datetime.strptime(self.nextRatDate, "%Y-%m-%d %H:%M:%S") < now):
             self.setNextTime()
 
-    def setNextTime(self):
-        now = datetime.datetime.now()
-        randTime = (now + datetime.timedelta(hours=random.randint(12, 23))).replace(minute=random.randint(0, 59), second=0, microsecond=0)
+    def setNextTime(self,force_time=None):
+        
+        randTime = (force_time or (datetime.datetime.now() + 
+            datetime.timedelta(hours=random.randint(12, 23))
+            ).replace(minute=random.randint(0, 59))
+             ).replace(microsecond=0,second=0) 
+
 
         #Set next cheese time
         self.events.update(set('next', str(randTime)), where('name') == 'ratrace')
 
-        self.getNextTime()
+        self.getNextTime(skip_elapsed_check=True)
 
     async def checkStart(self):
         now = datetime.datetime.now()
@@ -100,6 +105,11 @@ class LabCog(commands.Cog, Server):
             
             self.hasCheese = False
             self.setNextTime()
+        elif message.content == '!newcheese':
+            self.setNextTime(
+                force_time= datetime.datetime.now()
+                )
+            await self.checkStart()
 
     # === END RatRace methods ===
 
