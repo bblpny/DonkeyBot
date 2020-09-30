@@ -31,11 +31,12 @@ class ExperimentCog(commands.Cog, Server):
                 #animated emoji
                 r'<a:.+?:\d+>' r'|'
                 #mentions
-                r'<@.+?:\d+>' r'|'
+                r'<@.+?\d+>' r'|'
+                r'<@!.+?\d+>' r'|'
                 #role mentions
-                r'<@&.+?:\d+>' r'|'
+                r'<@&.+?\d+>' r'|'
                 #channel mentions.
-                r'<#.+?:\d+>' r'|'
+                r'<#.+?\d+>' r'|'
                 ,
                 #empty string.
                 '', text)
